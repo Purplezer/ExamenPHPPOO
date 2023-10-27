@@ -54,7 +54,6 @@ class Personnage {
 
 
     // Methode niveau de puissance
-
     public function augmenterNiveauPuissance() {
 
         $this->niveauPuissance++;
@@ -86,7 +85,6 @@ class Personnage {
 
 
     //SETTERS
-
     public function setNiveauPuissance($niveauPuissance) {
         $this->niveauPuissance = $niveauPuissance;
         return $this;
@@ -108,9 +106,9 @@ class Hero extends Personnage {
     public function attaquer($ennemi) {
         $attaquesDispo = ["Coup de poing"];
 
-        if ($this->getNiveauPuissance() >= 2) {
+        if ($this->getNiveauPuissance() == 2 || $this->getNiveauPuissance() == 3 || $this->getNiveauPuissance() == 4) {
             $attaquesDispo = ["Coup de poing", "Kamehameha"];
-        } elseif ($this->getNiveauPuissance() >= 5) {
+        } elseif ($this->getNiveauPuissance() == 5) {
             $attaquesDispo = ["Coup de poing", "Kamehameha", "Genkidama"];
         }
 
