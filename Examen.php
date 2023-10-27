@@ -1,84 +1,124 @@
 <?php
 
-
 class Personnage {
-    public $nom;
-    public $niveauPuissance;
-    public $pointsDeVie;
-    public $atq;
-    public $def;
+    protected $nom;
+    protected $niveauPuissance;
+    protected $pointsDeVie;
+    protected $atq;
+    protected $def;
+
+    protected $nbrWin = 0;
+
     public function __construct($nom, $niveauPuissance, $pointsDeVie, $atq, $def) {
         $this->nom = $nom;
         $this->niveauPuissance = $niveauPuissance;
+        // TODO methode pour niveau de puissance ?
         $this->pointsDeVie = $pointsDeVie;
         $this->atq = $atq;
         $this->def = $def;
+        // $this->nbrWin = 0;
     }
 
-}
+    public function attaquer($ennemi) {
+        $degats = $this->atq;
+        echo $this->nom . " attaque " . $ennemi->nom . " pour " . $degats . " points de dégâts.\n";
+        $ennemi->recevoirDegats($degats);
+    }
 
-class Hero extends Personnage {
-    public function __construct($nom, $niveauPuissance, $pointsDeVie, $atq, $def) {
-        parent::__construct($nom, $niveauPuissance, $pointsDeVie, $atq, $def);
+    public function recevoirDegats($degats) {
+        // TODO petit calul pour la defense
+        $this->pointsDeVie -= $degats;
+
+        if ($this->pointsDeVie <= 0) {
+            echo $this->nom . " a été vaincu !\n";
+        } else {
+            echo $this->nom . " a " . $this->pointsDeVie . " points de vie restants.\n";
+        }
+    }
+
+    // isDie?
+    public function estMort() {
+        return $this->pointsDeVie <= 0;
+    }
+
+    public function afficherStats() {
+        echo "Nom : " . $this->nom . ", Niveau de puissance : " . $this->niveauPuissance . ", Points de vie : " . $this->pointsDeVie . ", Points d'attaque : " . $this->atq . ", Points de défense : " . $this->def . "\n";
+    }
+
+    // Methode Heal a la fin du combat
+    public function getPointsDeVieMax() {
+        return 100;
+    }
+
+    public function heal() {
+        $this->pointsDeVie = $this->getPointsDeVieMax();
+
+    }
+
+    
+
+
+    // Methode niveau de puissance
+
+    public function augmenterNiveauPuissance() {
+
+        $this->niveauPuissance++;
+        //appel de la function heal
+        $this->heal();
+        $this->pointsDeVie += $this->pointsDeVie * 0.5;
+        $this->atq += $this->atq * 0.5;
+        echo "Vous êtes monter au niveau " . $this->niveauPuissance . " de puissance.\n";
+        // $this->def += 5;
+    }
+
+    //Methode pour compter le nbr de victoire
+    public function nbrWin() {
+        $this->nbrWin++;
+        echo "Vous avez gagné " . $this->nbrWin . " fois.\n";
+        return $this->nbrWin;
     }
 
 
-    //GETTERS
-
+    // GETTERS
     public function getNom() {
         return $this->nom;
     }
+
     public function getNiveauPuissance() {
         return $this->niveauPuissance;
     }
 
     public function getPointsDeVie() {
-
         return $this->pointsDeVie;
     }
 
     public function getAtq() {
         return $this->atq;
     }
-    
+
     public function getDef() {
         return $this->def;
     }
 
-
     //SETTERS
+
     public function setNiveauPuissance($niveauPuissance) {
         $this->niveauPuissance = $niveauPuissance;
         return $this;
     }
-
-    public function setPointsDeVie($pointsDeVie) { 
-        $this->pointsDeVie = $pointsDeVie;
-        return $this;
-    }
-
     public function setAtq($atq) {
         $this->atq = $atq;
         return $this;
     }
+}
 
-    public function setDef($def) {
-        $this->def = $def;
-        return $this;
-    }
-
-
-    public function Attaquer() {
-
-        echo "Vous avez choisi d'attaquer.\n";
-        echo "Que voulez-vous faire ?\n";
-
+class Hero extends Personnage {
+    public function attaquer($ennemi) {
         $attaquesDispo = ["Coup de poing"];
-        
 
-        if ($this->getNiveauPuissance() == 2) {
+        if ($this->getNiveauPuissance() >= 2) {
             $attaquesDispo = ["Coup de poing", "Kamehameha"];
-        } else if ($this->getNiveauPuissance() == 5) {
+        } elseif ($this->getNiveauPuissance() == 5) {
             $attaquesDispo = ["Coup de poing", "Kamehameha", "Genkidama"];
         }
 
@@ -87,204 +127,147 @@ class Hero extends Personnage {
         }
 
         $choixAttaque = readline("Votre choix (1/2/3): ");
+
+        // change l'attaque de facon dynamique en fonction du choix du tour
         switch ($choixAttaque) {
             case 1:
                 echo "Vous avez choisi " . $attaquesDispo[0] . "\n";
-                $degats = $this->getAtq() * 1;
-                echo "Vous avez infligé " . $degats . " points de dégats.\n";
+                $this->setAtq($this->getAtq() * 1);
                 break;
             case 2:
-                echo "Vous avez choisi " . $attaquesDispo[1] . "\n";
-                $degats = $this->getAtq() * 2;
-                echo "Vous avez infligé " . $degats . " points de dégats.\n";
+                if ($attaquesDispo[1] != null) {
+                    echo "Vous avez choisi " . $attaquesDispo[1] . "\n";
+                    $this->setAtq($this->getAtq() * 2);
+                }
                 break;
             case 3:
-                echo "Vous avez choisi " . $attaquesDispo[2] . "\n";
-                $degats = $this->getAtq() * 3;
-                echo "Vous avez infligé " . $degats . " points de dégats.\n";
+                if ($attaquesDispo[2] != null) {
+                    echo "Vous avez choisi " . $attaquesDispo[2] . "\n";
+                    $this->setAtq($this->getAtq() * 3);
+                }
                 break;
-            default:
-                echo "Vous n'avez pas choisi d'attaque.\n";
-                return $this->Attaquer();
         }
+        parent::attaquer($ennemi);
     }
- 
-    
-
-
 }
 
 class Vilain extends Personnage {
-    public function __construct($nom, $niveauPuissance, $pointsDeVie, $atq, $def) {
-        parent::__construct($nom, $niveauPuissance, $pointsDeVie, $atq, $def);
+    public function attaquer($ennemi) {
+        parent::attaquer($ennemi);
+
+        // if ($this->getNiveauPuissance() == 2) {
+        //     $attaquesDispo = ["Coup de poing", "Kamehameha"];
+        // } elseif ($this->getNiveauPuissance() == 5) {
+        //     $attaquesDispo = ["Coup de poing", "Kamehameha"];
+        // }
+
+        // vraiment besoin de l'attaque pour les vilains?
     }
 
-    //GETTERS
-    public function getNom() {
-        return $this->nom;
-    }
-    public function getNiveauPuissance() {
-        return $this->niveauPuissance;
-    }
-
-    public function getPointsDeVie() {
-
-        return $this->pointsDeVie;
-    }
-
-    public function getAtq() {
-        return $this->atq;
-    }
-    
-    public function getDef() {
-        return $this->def;
-    }
-
-    // Méthodes spécifiques aux méchants
-    public function attaqueEnnemie() {
-        $attaquesDispo = ["Coup de poing"];
-        
-
-        if ($this->getNiveauPuissance() == 2) {
-            $attaquesDispo = ["Coup de poing", "Kienzan"];
-        } else if ($this->getNiveauPuissance() == 5) {
-            $attaquesDispo = ["Coup de poing", "Kienzan", "Death Beam"];
-        }
-
-
-        $attaqueE = rand(1,3);
-
-        switch ($attaqueE) {
-            case 1:
-                echo $this->getNom() . " a lancé " . $attaquesDispo[0] . "\n";
-                $degats = $this->getAtq() * 1;
-                echo $this->getNom() . " a infligé " . $degats . " points de dégats.\n";
-                break;
-            case 2:
-                echo $this->getNom() . " a lancé " . $attaquesDispo[1] . "\n";
-                $degats = $this->getAtq() * 2;
-                echo $this->getNom() . " a infligé " . $degats . " points de dégats.\n";
-                break;
-            case 3:
-                echo $this->getNom() . " a lancé " . $attaquesDispo[2] . "\n";
-                $degats = $this->getAtq() * 3;
-                echo $this->getNom() . " a infligé " . $degats . " points de dégats.\n";
-                break;
-            
-        }
+    public function augmenterNiveauPuissance() {
+        $this->niveauPuissance++;
+        $this->heal();
+        $this->pointsDeVie += $this->pointsDeVie * 0.5;
+        $this->atq += $this->atq * 0.5;
+        // echo "Le vilain est monté au niveau " . $this->niveauPuissance . " de puissance.\n";
+        // $this->def += 5;
     }
 }
 
-
 class Game {
+    private $heros;
+    private $vilains;
 
-    private $perso;
-
-    private $ennemi;
-    private $listeHeros;
-
-    private $listeVilains;
-
-    public function __construct($listeHeros, $listeVilains) {
-        $this->listeHeros = $listeHeros;
-        $this->listeVilains = $listeVilains;
-        $this->perso = null;
-
+    public function __construct($heros, $vilains) {
+        $this->heros = $heros;
+        $this->vilains = $vilains;
     }
 
-    public function choixPerso() {
-        echo "Choisissez votre personnage : \n";
-        $i = 1;
-        foreach ($this->listeHeros as $hero) {
-            echo "$i." . $hero->nom . "\n";
-            $i++;
-        }
-
-        $choixPerso = readline("Votre choix (1/2/3): ");
-        switch ($choixPerso) {
-            case 1:
-                echo "Vous avez choisi " . $this->listeHeros[0]->nom . "\n";
-                $this->perso = $this->listeHeros[0];
-                // echo $this->perso->nom;
-                break;
-            case 2:
-                echo "Vous avez choisi " . $this->listeHeros[1]->nom . "\n";
-                $this->perso = $this->listeHeros[1];
-                break;
-            case 3:
-                echo "Vous avez choisi " . $this->listeHeros[2]->nom . "\n";
-                $this->perso = $this->listeHeros[2];
-                break;
-            default:
-                echo "Vous n'avez pas choisi de personnage.\n";
-                return $this->choixPerso();
-        }
-    }
-
-
-    public function Combat() {
-
-        $ennemi = $this->listeVilains[rand(0,2)];
-
-        echo "Le combat commence !\n";
-        echo "C'est au tour de " . $this->perso->nom . " d'agir.\n";
-        $this->perso->Attaquer();
-            // Vous pouvez ajouter ici la logique pour gérer les attaques des héros contre les vilains
-
+    public function combattre($hero, $vilain) {
         
 
+        echo "Un combat commence entre " . $hero->getNom() . " et " . $vilain->getNom() . "!\n";
 
-        // Logique pour gérer les attaques des vilains contre les héros si nécessaire
-        echo "C'est au tour de " . $ennemi->nom . " d'agir.\n";
-        $ennemi->attaqueEnnemie();
-
-
-        echo "Le combat est terminé !\n";
-    }
-    public function showStats($listeHeros) {
-        $heros = array_filter($listeHeros, function($personnage) {
-            return $personnage instanceof Hero;
-        });
-    
-        foreach ($heros as $hero) {
-            echo "Nom : " . $hero->nom . ", Niveau de puissance : " . $hero->niveauPuissance . ", Points de vie : " . $hero->pointsDeVie . ", Points d'attaque :" . $hero->atq . ", Points de défense :" . $hero->def . "\n";
+        // la demande de l'attaque se fait dans la classe Hero pour que l'attaque soit commune au deux, l'attaque est change avant l'action d'attaque sur l'adversaire
+        while (!$hero->estMort() && !$vilain->estMort()) {
+            $hero->attaquer($vilain);
+            if (!$vilain->estMort()) {
+                $vilain->attaquer($hero);
+            } 
+        }
+        
+        echo "Le combat est terminé!\n";
+        // Condition pour augmenter le niveau de puissance et le nbr de victoire
+        if ($vilain->estMort()) {   
+            $hero->augmenterNiveauPuissance();
             
+
+            // $hero->nbrWin();
+        }
+
+        $hero->afficherStats();
+        $vilain->afficherStats();
+    }
+
+    public function choisirPersonnage($liste) {
+        echo "Choisissez un personnage : \n";
+        for ($i = 0; $i < count($liste); $i++) {
+            echo ($i + 1) . ". " . $liste[$i]->getNom() . "\n";
+        }
+
+        $choix = readline("Votre choix (1/2/3): ");
+        switch ($choix) {
+            case 1:
+                echo "Vous avez choisi " . $liste[$choix - 1]->getNom() . "\n";
+                return $liste[$choix - 1];
+            case 2:
+                echo "Vous avez choisi " . $liste[$choix - 1]->getNom() . "\n";
+                return $liste[$choix - 1];
+            case 3:
+                echo "Vous avez choisi " . $liste[$choix - 1]->getNom() . "\n";
+                return $liste[$choix - 1];
         }
     }
 
-    public function Save() {
+    public function jouer() {
 
-    }
+        $hero = $this->choisirPersonnage($this->heros);
+        // $vilain = $this->choisirPersonnage($this->vilains);
+        $vilain = $this->vilains[array_rand($this->vilains)];
+        // fonction aleatoir pour enemie ?
 
-    public function Win() {
-        
-    }
+        // $this->combattre($hero, $vilain);
+        // TODO petite boucle pour faire un autre combat tant que le nombre de victoire est inferieur a 10
+        $nbrVictoires = 0; // Variable pour suivre le nombre de victoires
 
+    while ($nbrVictoires < 10) {
+        $this->combattre($hero, $vilain);
+        if ($vilain->estMort()) {
+            $nbrVictoires++;
+            echo "Nombre de victoires : " . $nbrVictoires . "\n";
+            $vilain->augmenterNiveauPuissance(); // On soigne le vilain
+            $vilain = $this->vilains[array_rand($this->vilains)]; // On change de vilain
+            // $vilain->setNiveauPuissance(1); // Remettez le niveau du vilain à 1 après chaque victoire
+            }
+        }
+        echo "Bravo vous avez fini le jeu !\n";
+    } 
     
+        
 }
 
 $goku = new Hero("Goku", 1, 100, 20, 10);
 $vegeta = new Hero("Vegeta", 1, 100, 20, 10);
-$picollo = new Hero("Piccolo", 1, 100, 20, 10);
+$picollo = new Hero("Picollo", 1, 100, 20, 10);
 
 $listeHeros = [$goku, $vegeta, $picollo];
 
-$freezer = new Vilain ("Freezer", 1, 100, 20, 10);
-$cell = new Vilain ("Cell", 1, 100, 20, 10);
-$buu = new Vilain ("Buu", 1, 100, 20, 10);
+$freezer = new Vilain("Freezer", 1, 100, 20, 10);
+$cell = new Vilain("Cell", 1, 100, 20, 10);
+$buu = new Vilain("Buu", 1, 100, 20, 10);
 
 $listeVilains = [$freezer, $cell, $buu];
 
 $game = new Game($listeHeros, $listeVilains);
-$game->choixPerso();
-$game->Combat();
-
-// $game->showStats($listeHeros);
-
-
-
-
-// listerHeros($listeHeros);
-
-
+$game->jouer();
 ?>
