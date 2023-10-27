@@ -26,8 +26,10 @@ class Personnage {
 
         if ($this->pointsDeVie <= 0) {
             echo $this->nom . " a été vaincu !\n";
+            echo "--------------------------------------------------\n";
         } else {
             echo $this->nom . " a " . $this->pointsDeVie . " points de vie restants.\n";
+            echo "--------------------------------------------------\n";
         }
     }
 
@@ -38,6 +40,7 @@ class Personnage {
 
     public function afficherStats() {
         echo "Nom : " . $this->nom . ", Niveau de puissance : " . $this->niveauPuissance . ", Points de vie : " . $this->pointsDeVie . ", Points d'attaque : " . $this->atq . ".\n";
+        echo "--------------------------------------------------\n";
     }
 
     // Methode Heal a la fin du combat
@@ -117,6 +120,7 @@ class Hero extends Personnage {
         }
 
         $choixAttaque = readline("Votre choix (1/2/3): ");
+        echo "--------------------------------------------------\n";
 
         // change l'attaque de facon dynamique en fonction du choix du tour
         switch ($choixAttaque) {
@@ -171,6 +175,7 @@ class Game {
         
 
         echo "Un combat commence entre " . $hero->getNom() . " et " . $vilain->getNom() . "!\n";
+        echo "--------------------------------------------------\n";
 
         // la demande de l'attaque se fait dans la classe Hero pour que l'attaque soit commune au deux, l'attaque est change avant l'action d'attaque sur l'adversaire
         while (!$hero->estMort() && !$vilain->estMort()) {
@@ -181,6 +186,7 @@ class Game {
         }
         
         echo "Le combat est terminé!\n";
+        echo "--------------------------------------------------\n";
         // Condition pour augmenter le niveau de puissance et le nbr de victoire
         if ($vilain->estMort()) {   
             $hero->augmenterNiveauPuissance();
@@ -200,15 +206,19 @@ class Game {
         }
 
         $choix = readline("Votre choix (1/2/3): ");
+        echo "--------------------------------------------------\n";
         switch ($choix) {
             case 1:
                 echo "Vous avez choisi " . $liste[$choix - 1]->getNom() . "\n";
+                echo "--------------------------------------------------\n";
                 return $liste[$choix - 1];
             case 2:
                 echo "Vous avez choisi " . $liste[$choix - 1]->getNom() . "\n";
+                echo "--------------------------------------------------\n";
                 return $liste[$choix - 1];
             case 3:
                 echo "Vous avez choisi " . $liste[$choix - 1]->getNom() . "\n";
+                echo "--------------------------------------------------\n";
                 return $liste[$choix - 1];
         }
     }
@@ -221,22 +231,26 @@ class Game {
     }
 
     public function startGame() {
-        echo "-------------------------------------\n";
+        echo "--------------------------------------------------\n";
         echo "Bienvenue dans le jeu de combat DBZ !\n";
-        echo "-------------------------------------\n";
+        echo "--------------------------------------------------\n";
 
         //Choisir nouvelle partie ou charger la partie
         echo "1. Nouvelle partie\n";
         echo "2. Charger partie\n";
+        echo "--------------------------------------------------\n";
         $choixGame = readline("Votre choix (1/2): ");
+        echo "--------------------------------------------------\n";
         switch ($choixGame) {
                 case 1:
                     echo "Vous avez choisi de commencer une nouvelle partie.\n";
+                    echo "--------------------------------------------------\n";
                     $this->jouer();
                     break;
                     
                 case 2:
                     echo "Vous avez choisi de charger une partie.\n";
+                    echo "--------------------------------------------------\n";
                     $this->chargerSauvegarde();
                     break;
 
@@ -254,11 +268,14 @@ class Game {
                     $this->nbrVictoires = 0;
                     while ($this->nbrVictoires < 10) {
                         echo "Que voulez-vous faire ?\n";
+                        echo "--------------------------------------------------\n";
                         echo "1. Combattre\n";
                         echo "2. Voir ses stats\n";
                         echo "3. Sauvegarder et quitter\n";
+                        echo "--------------------------------------------------\n";
     
                         $choixJoueur = readline("Votre choix (1/2/3): ");
+                        echo "--------------------------------------------------\n";
 
 
                 switch ($choixJoueur) {
@@ -269,25 +286,31 @@ class Game {
                         if ($vilain->estMort()) {
                             $this->nbrVictoires++;
                             echo "Nombre de victoires : " . $this->nbrVictoires . "\n";
+                            echo "--------------------------------------------------\n";
                             $vilain->heal(); // On soigne le vilain
 
                             if ($this->nbrVictoires < 10) {
                                 $choix = readline("Voulez-vous combattre à nouveau ? (o/n) : ");
+                                echo "--------------------------------------------------\n";
 
                                 if ($choix == "n") {
                                     echo "Vous avez choisi de quitter.\n";
+                                    echo "--------------------------------------------------\n";
                                     break; // Quitte la boucle de combats
                                 } else if ($choix == "o"){
                                     echo "Vous avez choisi de continuer.\n";
+                                    echo "--------------------------------------------------\n";
                                     //On vérifie si le nbr de victoire est inférieur a 10
                                     if ($this->nbrVictoires !== 10) {       //si il est bien inférieur on demande si l'utilisateur veut changer de héros
                                     $choix = readline("Voulez-vous changer de héros ? (o/n) : ");
 
                                         if ($choix == "o") {
                                             echo "Vous avez choisi de changer de héros.\n";
+                                            echo "--------------------------------------------------\n";
                                             $hero = $this->choisirPersonnage($this->heros); // On change de héros
                                         } else {
                                             echo "Vous avez choisi de garder le même héros.\n";
+                                            echo "--------------------------------------------------\n";
                                         }
                                     }
                                 }
@@ -296,22 +319,31 @@ class Game {
                             } elseif ($hero->estMort()) {
                                 echo "Votre héros " . $hero->getNom() . " est mort !\n";
                                 echo "Vous avez perdu !\n";
+                                echo "--------------------------------------------------\n";
                                 break; // Quitte la boucle de combats
                         }
                     }
                         break;
                     case 2:
                         echo "Vous avez choisi de voir les stats.\n";
-                        $hero->afficherStats();
+                        echo "--------------------------------------------------\n";
+                        foreach ($this->heros as $hero) {
+                            $hero->afficherStats();
+                        }
+                        
                         break;
                     case 3:
                         echo "Vous avez choisi de sauvegarder et quitter.\n";
+                        echo "--------------------------------------------------\n";
                         $this->sauvegarder();
-                        return; // Sort de la fonction jouer
+                        $this->startGame();
+                        // return; // Sort de la fonction jouer
+                        break;
                 }
             }    
             
             echo "Bravo vous avez fini le jeu !\n";
+            echo "--------------------------------------------------\n";
         
     }
 }      
