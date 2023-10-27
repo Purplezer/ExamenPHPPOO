@@ -5,18 +5,13 @@ class Personnage {
     protected $niveauPuissance;
     protected $pointsDeVie;
     protected $atq;
-    protected $def;
 
-    protected $nbrWin = 0;
-
-    public function __construct($nom, $niveauPuissance, $pointsDeVie, $atq, $def) {
+    public function __construct($nom, $niveauPuissance, $pointsDeVie, $atq) {
         $this->nom = $nom;
         $this->niveauPuissance = $niveauPuissance;
-        // TODO methode pour niveau de puissance ?
         $this->pointsDeVie = $pointsDeVie;
         $this->atq = $atq;
-        $this->def = $def;
-        // $this->nbrWin = 0;
+
     }
 
     public function attaquer($ennemi) {
@@ -42,7 +37,7 @@ class Personnage {
     }
 
     public function afficherStats() {
-        echo "Nom : " . $this->nom . ", Niveau de puissance : " . $this->niveauPuissance . ", Points de vie : " . $this->pointsDeVie . ", Points d'attaque : " . $this->atq . ", Points de défense : " . $this->def . "\n";
+        echo "Nom : " . $this->nom . ", Niveau de puissance : " . $this->niveauPuissance . ", Points de vie : " . $this->pointsDeVie . ", Points d'attaque : " . $this->atq . ".\n";
     }
 
     // Methode Heal a la fin du combat
@@ -68,14 +63,7 @@ class Personnage {
         $this->pointsDeVie += $this->pointsDeVie * 0.5;
         $this->atq += $this->atq * 0.5;
         echo "Vous êtes monter au niveau " . $this->niveauPuissance . " de puissance.\n";
-        // $this->def += 5;
-    }
 
-    //Methode pour compter le nbr de victoire
-    public function nbrWin() {
-        $this->nbrWin++;
-        echo "Vous avez gagné " . $this->nbrWin . " fois.\n";
-        return $this->nbrWin;
     }
 
 
@@ -96,9 +84,6 @@ class Personnage {
         return $this->atq;
     }
 
-    public function getDef() {
-        return $this->def;
-    }
 
     //SETTERS
 
@@ -110,6 +95,13 @@ class Personnage {
         $this->atq = $atq;
         return $this;
     }
+
+    public function setPointsDeVie($pointsDeVie) {
+        $this->pointsDeVie = $pointsDeVie;
+        return $this;
+    }
+
+
 }
 
 class Hero extends Personnage {
@@ -118,7 +110,7 @@ class Hero extends Personnage {
 
         if ($this->getNiveauPuissance() >= 2) {
             $attaquesDispo = ["Coup de poing", "Kamehameha"];
-        } elseif ($this->getNiveauPuissance() == 5) {
+        } elseif ($this->getNiveauPuissance() >= 5) {
             $attaquesDispo = ["Coup de poing", "Kamehameha", "Genkidama"];
         }
 
@@ -155,28 +147,22 @@ class Vilain extends Personnage {
     public function attaquer($ennemi) {
         parent::attaquer($ennemi);
 
-        // if ($this->getNiveauPuissance() == 2) {
-        //     $attaquesDispo = ["Coup de poing", "Kamehameha"];
-        // } elseif ($this->getNiveauPuissance() == 5) {
-        //     $attaquesDispo = ["Coup de poing", "Kamehameha"];
-        // }
-
-        // vraiment besoin de l'attaque pour les vilains?
     }
 
     public function augmenterNiveauPuissance() {
         $this->niveauPuissance++;
         $this->heal();
-        $this->pointsDeVie += $this->pointsDeVie * 0.5;
-        $this->atq += $this->atq * 0.5;
-        // echo "Le vilain est monté au niveau " . $this->niveauPuissance . " de puissance.\n";
-        // $this->def += 5;
+        $this->pointsDeVie += $this->pointsDeVie * 0.2;
+        $this->atq += $this->atq * 0.2;
+
     }
 }
 
 class Game {
     private $heros;
     private $vilains;
+
+    private $nbrVictoires = 0; // Variable pour suivre le nombre de victoires
 
     public function __construct($heros, $vilains) {
         $this->heros = $heros;
@@ -229,45 +215,122 @@ class Game {
         }
     }
 
+    public function sauvegarder() {
+
+    }
+
+    public function chargerSauvegarde() {
+    }
+
+    public function startGame() {
+        echo "-------------------------------------\n";
+        echo "Bienvenue dans le jeu de combat DBZ !\n";
+        echo "-------------------------------------\n";
+
+        //Choisir nouvelle partie ou charger la partie
+        echo "1. Nouvelle partie\n";
+        echo "2. Charger partie\n";
+        $choixGame = readline("Votre choix (1/2): ");
+        switch ($choixGame) {
+                case 1:
+                    echo "Vous avez choisi de commencer une nouvelle partie.\n";
+                    $this->jouer();
+                    break;
+                    
+                case 2:
+                    echo "Vous avez choisi de charger une partie.\n";
+                    $this->chargerSauvegarde();
+                    break;
+
+        }
+
+    } 
+
     public function jouer() {
 
         $hero = $this->choisirPersonnage($this->heros);
-        // $vilain = $this->choisirPersonnage($this->vilains);
-        $vilain = $this->vilains[array_rand($this->vilains)];
-        // fonction aleatoir pour enemie ?
-
-        // $this->combattre($hero, $vilain);
-        // TODO petite boucle pour faire un autre combat tant que le nombre de victoire est inferieur a 10
-        $nbrVictoires = 0; // Variable pour suivre le nombre de victoires
-
-    while ($nbrVictoires < 10) {
-        $this->combattre($hero, $vilain);
-        if ($vilain->estMort()) {
-            $nbrVictoires++;
-            echo "Nombre de victoires : " . $nbrVictoires . "\n";
-            $vilain->augmenterNiveauPuissance(); // On soigne le vilain
-            $vilain = $this->vilains[array_rand($this->vilains)]; // On change de vilain
-            // $vilain->setNiveauPuissance(1); // Remettez le niveau du vilain à 1 après chaque victoire
-            }
-        }
-        echo "Bravo vous avez fini le jeu !\n";
-    } 
+            
+                    //fonction aléatoire pour choisir un ennemie
+                    $vilain = $this->vilains[array_rand($this->vilains)];
     
-        
-}
+                    $this->nbrVictoires = 0;
+                    while ($this->nbrVictoires < 10) {
+                        echo "Que voulez-vous faire ?\n";
+                        echo "1. Combattre\n";
+                        echo "2. Voir ses stats\n";
+                        echo "3. Sauvegarder et quitter\n";
+    
+                        $choixJoueur = readline("Votre choix (1/2/3): ");
 
-$goku = new Hero("Goku", 1, 100, 20, 10);
-$vegeta = new Hero("Vegeta", 1, 100, 20, 10);
-$picollo = new Hero("Picollo", 1, 100, 20, 10);
+
+                switch ($choixJoueur) {
+                    case 1: 
+                        echo "Vous avez choisi de combattre.\n";
+                        $this->combattre($hero, $vilain);
+
+                        if ($vilain->estMort()) {
+                            $this->nbrVictoires++;
+                            echo "Nombre de victoires : " . $this->nbrVictoires . "\n";
+                            $vilain->heal(); // On soigne le vilain
+
+                            if ($this->nbrVictoires < 10) {
+                                $choix = readline("Voulez-vous combattre à nouveau ? (o/n) : ");
+
+                                if ($choix == "n") {
+                                    echo "Vous avez choisi de quitter.\n";
+                                    break; // Quitte la boucle de combats
+                                } else if ($choix == "o"){
+                                    echo "Vous avez choisi de continuer.\n";
+                                    //On vérifie si le nbr de victoire est inférieur a 10
+                                    if ($this->nbrVictoires !== 10) {       //si il est bien inférieur on demande si l'utilisateur veut changer de héros
+                                    $choix = readline("Voulez-vous changer de héros ? (o/n) : ");
+
+                                        if ($choix == "o") {
+                                            echo "Vous avez choisi de changer de héros.\n";
+                                            $hero = $this->choisirPersonnage($this->heros); // On change de héros
+                                        } else {
+                                            echo "Vous avez choisi de garder le même héros.\n";
+                                        }
+                                    }
+                                }
+                            $vilain = $this->vilains[array_rand($this->vilains)]; // On change de vilain
+
+                            } elseif ($hero->estMort()) {
+                                echo "Votre héros " . $hero->getNom() . " est mort !\n";
+                                echo "Vous avez perdu !\n";
+                                break; // Quitte la boucle de combats
+                        }
+                    }
+                        break;
+                    case 2:
+                        echo "Vous avez choisi de voir les stats.\n";
+                        $hero->afficherStats();
+                        break;
+                    case 3:
+                        echo "Vous avez choisi de sauvegarder et quitter.\n";
+                        $this->sauvegarder();
+                        return; // Sort de la fonction jouer
+                }
+            }    
+            
+            echo "Bravo vous avez fini le jeu !\n";
+        
+    }
+}      
+
+
+$goku = new Hero("Goku", 1, 100, 20);
+$vegeta = new Hero("Vegeta", 1, 100, 20);
+$picollo = new Hero("Picollo", 1, 100, 20);
 
 $listeHeros = [$goku, $vegeta, $picollo];
 
-$freezer = new Vilain("Freezer", 1, 100, 20, 10);
-$cell = new Vilain("Cell", 1, 100, 20, 10);
-$buu = new Vilain("Buu", 1, 100, 20, 10);
+$freezer = new Vilain("Freezer", 1, 100, 20);
+$cell = new Vilain("Cell", 1, 100, 20);
+$buu = new Vilain("Buu", 1, 100, 20);
 
 $listeVilains = [$freezer, $cell, $buu];
 
 $game = new Game($listeHeros, $listeVilains);
-$game->jouer();
+$game->startGame();
 ?>
