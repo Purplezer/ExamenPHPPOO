@@ -239,9 +239,11 @@ class Game {
     public function sauvegarder() {
         $saveHero = serialize($this->heros);
         $saveVillain = serialize($this->vilains);
+        $nbrVictoires = serialize($this->nbrVictoires);
 
         file_put_contents('saveH.txt', $saveHero);
         file_put_contents('saveV.txt', $saveVillain);
+        file_put_contents('nbrVictoires.txt', $nbrVictoires);
 
         echo "Partie sauvegardée\n";
         echo "Au revoir\n";
@@ -254,9 +256,11 @@ class Game {
         
         $saveHero = file_get_contents('saveH.txt');
         $saveVilain = file_get_contents('saveV.txt');
+        $nbrVictoires = file_get_contents('nbrVictoires.txt');
 
         $this->heros = unserialize($saveHero);
         $this->vilains = unserialize($saveVilain);
+        $this->nbrVictoires = unserialize($nbrVictoires);
 
         echo "Partie chargée\n";
         $this->jouer();
@@ -298,8 +302,11 @@ class Game {
             
                     //function to choose a random vilain
                     $vilain = $this->vilains[array_rand($this->vilains)];       
-    
-                    $this->nbrVictoires = 0;    //set the number of victories to 0
+
+                    if ($this->nbrVictoires == null) {
+                        $this->nbrVictoires = 0;
+                    }
+                    // $this->nbrVictoires = 0;    //set the number of victories to 0
                     while ($this->nbrVictoires < 10) {      //while loop to fight until the hero has 10 victories
                         echo "Que voulez-vous faire ?\n";
                         echo "--------------------------------------------------\n";
@@ -380,7 +387,6 @@ class Game {
     }
 }      
 
-//creation of the heros
 $goku = new Hero("Goku", 1, 100, 20);
 $vegeta = new Hero("Vegeta", 1, 100, 20);
 $picollo = new Hero("Picollo", 1, 100, 20);
