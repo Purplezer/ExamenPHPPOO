@@ -116,7 +116,7 @@ class Hero extends Personnage {
         //condition to display the attack available according to the level of power
         if ($this->getNiveauPuissance() == 2 || $this->getNiveauPuissance() == 3 || $this->getNiveauPuissance() == 4) {
             $attaquesDispo = ["Coup de poing", "Kamehameha"];
-        } elseif ($this->getNiveauPuissance() == 5) {
+        } elseif ($this->getNiveauPuissance() == 5 || $this->getNiveauPuissance() == 6 || $this->getNiveauPuissance() == 7 || $this->getNiveauPuissance() == 8 || $this->getNiveauPuissance() == 9 || $this->getNiveauPuissance() == 10 || $this->getNiveauPuissance() == 11) {
             $attaquesDispo = ["Coup de poing", "Kamehameha", "Genkidama"];
         }
 
