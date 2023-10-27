@@ -237,11 +237,29 @@ class Game {
 
     //method to save the game
     public function sauvegarder() {
+        $saveHero = serialize($this->heros);
+        $saveVillain = serialize($this->vilains);
 
+        file_put_contents('saveH.txt', $saveHero);
+        file_put_contents('saveV.txt', $saveVillain);
+
+        echo "Partie sauvegardée\n";
+        echo "Au revoir\n";
+
+        exit;
     }
 
     //method to load the game
     public function chargerSauvegarde() {
+        
+        $saveHero = file_get_contents('saveH.txt');
+        $saveVilain = file_get_contents('saveV.txt');
+
+        $this->heros = unserialize($saveHero);
+        $this->vilains = unserialize($saveVilain);
+
+        echo "Partie chargée\n";
+        $this->jouer();
     }
 
     //method to start the game
@@ -254,7 +272,7 @@ class Game {
         echo "1. Nouvelle partie\n";
         echo "2. Charger partie\n";
         echo "--------------------------------------------------\n";
-        $choixGame = readline("Votre choix (1/2): ");       //choice of the user
+        $choixGame = readline("Votre choix (1/2): ");
         echo "--------------------------------------------------\n";
         switch ($choixGame) {       //condition to start a new game or load a game
                 case 1:
@@ -362,7 +380,7 @@ class Game {
     }
 }      
 
-//creation of the characters
+//creation of the heros
 $goku = new Hero("Goku", 1, 100, 20);
 $vegeta = new Hero("Vegeta", 1, 100, 20);
 $picollo = new Hero("Picollo", 1, 100, 20);
